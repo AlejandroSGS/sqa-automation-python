@@ -1,0 +1,33 @@
+name: SQA Automation Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencias
+        run: |
+          pip install pytest
+          pip install pytest-playwright
+          pip install requests
+          playwright install chromium
+
+      - name: Correr tests unitarios
+        run: pytest tests/test_utils.py tests/test_api.py -v
+
+      - name: Correr tests de UI
+        run: pytest tests/test_ui.py -v
