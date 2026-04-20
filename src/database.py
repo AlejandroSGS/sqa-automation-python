@@ -61,6 +61,19 @@ class DBManager:
         """)
         return dict(self.cursor.fetchall())
     
+    def obtener_lentos(self, tiempo_max: float = 2.0) -> list:
+        self.cursor.execute("""
+            SELECT id, modulo, estado, tiempo 
+            FROM resultados 
+            WHERE tiempo > %s
+            ORDER BY tiempo DESC
+        """, (tiempo_max,))
+        filas = self.cursor.fetchall()
+        return [
+            {"id": f[0], "modulo": f[1], "estado": f[2], "tiempo": float(f[3])}
+            for f in filas
+        ]
+
     def cerrar(self) -> None:
         if self.conn:
             self.conn.close()

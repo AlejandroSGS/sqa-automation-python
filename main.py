@@ -27,6 +27,8 @@ db.cerrar()
 db.conectar()
 fallados = db.obtener_fallos()
 resumen  = db.obtener_resumen()
+lentos  = db.obtener_lentos()
 
 print(f"Fallados : {[t['id'] for t in fallados]}")
 print(f"Resumen  : {resumen}")
+print(f"Lentos   : {[t['id'] for t in lentos]}")
