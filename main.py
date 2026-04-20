@@ -1,5 +1,8 @@
-import json
-from src.suite import SuiteDePruebas
+from dotenv import load_dotenv
+import os
+from src.database import DBManager
+
+load_dotenv(r"C:\Users\aleja\OneDrive\Desktop\SQA\.env")
 
 resultados = [
     {"id": "TC_001", "modulo": "Login",    "estado": "PASSED", "tiempo": 1.2},
@@ -10,13 +13,20 @@ resultados = [
     {"id": "TC_006", "modulo": "Checkout", "estado": "SKIPPED","tiempo": 0.0},
 ]
 
-# 1. Guardar datos en archivo
-with open("datos/resultados.json", "w", encoding="utf-8") as f:
-    json.dump(resultados, f, indent=4)
+db = DBManager(
+    host     = os.getenv("DB_HOST"),
+    dbname   = os.getenv("DB_NAME"),
+    user     = os.getenv("DB_USER"),
+    password = os.getenv("DB_PASSWORD")
+)
 
-# 2. Usar la clase
-suite = SuiteDePruebas("datos/resultados.json")
-suite.cargar()
-suite.analizar()
-suite.generar_reporte()
-print(suite)
+db.conectar()
+db.crear_tabla()
+db.insertar_resultados(resultados)
+db.cerrar()
+db.conectar()
+fallados = db.obtener_fallos()
+resumen  = db.obtener_resumen()
+
+print(f"Fallados : {[t['id'] for t in fallados]}")
+print(f"Resumen  : {resumen}")
